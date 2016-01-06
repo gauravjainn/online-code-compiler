@@ -9,6 +9,21 @@
     <script>
       hljs.initHighlightingOnLoad();
     </script>
+    <style type="text/css">
+        pre {
+          overflow: auto;
+          word-wrap: normal;
+          white-space: pre;
+        }
+        /*.code-history-block:nth-of-type(odd) {
+            background: burlywood !important;
+            width: 800px;
+        }
+        .code-history-block:nth-of-type(even) {
+            background: darkgrey !important;
+            width: 800px;
+        }*/
+    </style>
 </head>
 
 <body>
@@ -16,10 +31,14 @@
         {% if no_data %}
             <b> No History Found</b>
         {% else %}
-            {% for lang, code in history_list %}
-              <div class="code-history-block">
-                <b>{{lang}}</b>
+            {% for lang, code, inp in history_list %}
+              <div class="code-history-block" style="padding-bottom:50px;">
+                <b>Language:  {{lang}}</b><br>
                 <pre style="width:800px"><code>{{code}}</code></pre>
+                {% if inp %}
+                    <b>Custom Input: </b>
+                    <pre style="width:400px;" class="nohighlight">{{inp}}</pre>
+                {% endif %}
               </div>
             {% endfor %}
         {% endif %}

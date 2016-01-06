@@ -5,7 +5,7 @@
 DEBUG = True
 ALLOWED_HOSTS = [] if DEBUG else ['*']
 ```
-s
+
 ```sh
 python manage.py migrate
 python manage.py runserver

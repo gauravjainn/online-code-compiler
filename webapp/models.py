@@ -29,6 +29,7 @@ class CodeUrl(TimeStamp):
     uri = models.CharField(max_length=63, unique=True)
     lang = models.CharField(max_length=15, choices=LANGUAGE_CHOICES, blank=True, null=True)
     code = models.TextField(blank=True, null=True)
+    inp = models.TextField(blank=True, null=True)
     result = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
@@ -42,6 +43,7 @@ class CodeHistory(TimeStamp):
     uri = models.CharField(max_length=63)
     lang = models.CharField(max_length=15, blank=True, null=True)
     code = models.TextField(blank=True, null=True)
+    inp = models.TextField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Code History"

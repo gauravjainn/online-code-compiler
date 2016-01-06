@@ -42,6 +42,7 @@ class Home(View):
         data.update({
             'lang': cu_obj.lang or 'PYTHON',
             'code': cu_obj.code,
+            'inp': cu_obj.inp,
             'result': json.loads(cu_obj.result or '{}'),
             'uri': uri,
         })
@@ -49,7 +50,7 @@ class Home(View):
         return render(request, 'home.html', data)
 
     # Uncomment this method if you dont want to use ajax api
-    # and wants ormal submit and refresh behaviour
+    # and wants normal `submit and refresh` behaviour
 
     # def post(self, request, *args, **kwargs):
     #     uri = request.get_full_path()
@@ -94,10 +95,12 @@ def source_compile_and_run(request):
     uri = request.GET.get('uri')
     lang = request.GET.get('lang')
     code = request.GET.get('code')
+    inp = request.GET.get('inp')
 
-    resp = code_compile_result(lang, code)
+    resp = code_compile_result(lang, code, inp)
 
     if resp is None:
+        # Either net is too slow or hackerearth API is down
         data.update({'result': {'error': 'Network Error'}})
         return HttpJSONResponse(data)
 
@@ -108,6 +111,7 @@ def source_compile_and_run(request):
 
     cu_obj.lang = lang
     cu_obj.code = code.strip()
+    cu_obj.inp = inp
 
     if resp.get('message') == 'OK' or resp.get('compile_status') == 'OK':
         cu_obj.result = json.dumps(resp['run_status'])
@@ -119,14 +123,14 @@ def source_compile_and_run(request):
     cu_obj.save()
 
     # Maintain history
-    CodeHistory.objects.create(uri=uri.strip("/"), lang=lang, code=code)
+    CodeHistory.objects.create(uri=uri.strip("/"), lang=lang, code=code, inp=inp)
 
     data['result'] = json.loads(cu_obj.result) # or resp.get('run_status')
     return HttpJSONResponse(data)
 
 
 def code_history(request, uri):
-    data = CodeHistory.objects.filter(uri=uri).order_by('-created_at').values_list('lang', 'code')
+    data = CodeHistory.objects.filter(uri=uri).order_by('-created_at').values_list('lang', 'code', 'inp')
     # Consider pagination/infinite-scrolling
 
     no_data = False if len(data) > 0 else True

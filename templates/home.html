@@ -30,10 +30,12 @@
         <div>
             <textarea class="XML hljs" id="textarea" name="code" cols="80" rows="15" wrap="off" style="margin-left:90px">{% if code %}{{code}}{% endif %}</textarea>
             <br>
-            <input type="submit" id="submit-button" class="btn btn-primary" name="submit" value="Compile and Run" style="margin-left:320px"/>
+            <p style="margin-left:90px">Custom Input</p>
+            <textarea id="inp" cols="40" rows="4" style="margin-left:90px">{% if inp %}{{inp}}{% endif %}</textarea>
+            <input type="submit" id="submit-button" class="btn btn-primary" name="submit" value="Compile and Run" style="margin-left:92px; margin-top:-130px"/>
         </div>
         
-        <div id='history' style="margin-left: 545px; margin-top: -35px;">
+        <div id='history' style="margin-left: 545px; margin-top: -40px;">
           <a class="btn btn-primary" href="/history/{{uri}}" target="_blank">See History</a>
         </div>
         <br>
@@ -79,7 +81,8 @@
                data: {
                   'uri': window.location.pathname,
                   'lang': document.querySelector('input[name="lang"]:checked').value,
-                  'code': document.getElementById("textarea").value
+                  'code': document.getElementById("textarea").value,
+                  'inp': document.getElementById("inp").value
                },
                error: function(xhr, textStatus, error){
                   console.log(xhr.statusText);

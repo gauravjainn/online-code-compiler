@@ -41,7 +41,7 @@ def generate_unique_uri():
     return uuid.uuid4().hex
 
 
-def code_compile_result(lang, source):
+def code_compile_result(lang, source, inp=None):
 
     RUN_URL = 'https://api.hackerearth.com/v3/code/run/'
     CLIENT_SECRET = '2a277f2591e3a56e07f8d1249a51dee17320818a'
@@ -53,6 +53,7 @@ def code_compile_result(lang, source):
         'lang': lang,
         'time_limit': 5,
         'memory_limit': 262144,
+        'input': inp
     }
 
     try:
