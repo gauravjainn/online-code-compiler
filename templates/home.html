@@ -1,0 +1,109 @@
+<html>
+<head>
+    <title>Online Code Compile</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/default.min.css">
+    <link href="/static/css/background.css" rel="stylesheet" type="text/css" />
+    <script src="/static/js/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/highlight.min.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+    <style>
+      .ajax-center {
+        margin-left: 300px;
+      }
+    </style>
+</head>
+
+<body>
+    <div style="margin-left: 200; margin-top: 50px;">
+        <div style="float:left">
+            <p>Language: </p>
+            {% for l, dl in lang_choices.items %}
+                <input style="vertical-align:middle" type="radio" name="lang" value="{{l}}" {% ifequal l lang %}checked="checked"{% endifequal %}/>
+                <span style="vertical-align:middle">{{dl}}</span>
+                <br/>
+              {% endfor %}
+        </div>
+
+        <div>
+            <textarea class="XML hljs" id="textarea" name="code" cols="80" rows="15" wrap="off" style="margin-left:90px">{% if code %}{{code}}{% endif %}</textarea>
+            <br>
+            <input type="submit" id="submit-button" class="btn btn-primary" name="submit" value="Compile and Run" style="margin-left:320px"/>
+        </div>
+        
+        <div id='history' style="margin-left: 545px; margin-top: -35px;">
+          <a class="btn btn-primary" href="/history/{{uri}}" target="_blank">See History</a>
+        </div>
+        <br>
+        <div id="loadingDiv" class="ajax-center" style="display: none;">
+              <img src="/static/img/load.gif"/>
+        </div>
+
+        <div id="result" style="margin-left:90px; margin-right:320px;">
+            {% if result %}
+              {% for r, v in result.items %}
+                  {% if r == "output_html" %}
+                    <p class="bg-info"><b>Output</b>:<br>{{v | safe}}</p>
+                  {% else %}
+                    <p class="bg-info">{{r}} : {{v}}</p>
+                  {% endif %}
+              {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        var ta = document.getElementById('textarea');
+        ta.onkeydown = function(e) {
+          if (e.keyCode === 9 && typeof ta.selectionStart !== 'undefined') {
+            var startPosition = ta.selectionStart;
+            var endPosition = ta.selectionEnd;
+
+            ta.value = (ta.value.substring(0, startPosition) + 
+                        '    ' + 
+                        ta.value.substring(endPosition, ta.value.length));
+            ta.selectionStart = ta.selectionEnd = startPosition + 4;
+            return false;
+          }
+        };
+      </script>
+
+      <script type="text/javascript">
+          $('#submit-button').click(function() {
+            $("#loadingDiv").removeAttr('style');
+            $('#result').empty();
+            $.ajax({
+               url: '/api/run/',
+               data: {
+                  'uri': window.location.pathname,
+                  'lang': document.querySelector('input[name="lang"]:checked').value,
+                  'code': document.getElementById("textarea").value
+               },
+               error: function(xhr, textStatus, error){
+                  console.log(xhr.statusText);
+                  console.log(textStatus);
+                  console.log(error);
+              },
+               success: function(data) {
+                    html = "";
+                    for(o in data['result']){
+                        html += '<p class="bg-info">'
+                        if(o == 'output_html'){
+                          html += '<b>Output</b>' + ':<br>' + data["result"][o]
+                        }
+                        else{
+                          html += JSON.stringify(o) + ': ' + JSON.stringify(data["result"][o])
+                        }
+                        html += '</p>';
+                    }
+                    $('#result').append(html)
+                    $('#loadingDiv').attr('style', "display:none;")
+               },
+               type: 'GET'
+            });
+          });
+      </script>
+</body>
+</html>

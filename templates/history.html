@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>History | Online Code Compile</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/default.min.css">
+    <link href="/static/css/background.css" rel="stylesheet" type="text/css" />
+    <script src="/static/js/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/highlight.min.js"></script>
+    <script>
+      hljs.initHighlightingOnLoad();
+    </script>
+</head>
+
+<body>
+    <div style="margin-left: 10px;">
+        {% if no_data %}
+            <b> No History Found</b>
+        {% else %}
+            {% for lang, code in history_list %}
+              <div class="code-history-block">
+                <b>{{lang}}</b>
+                <pre style="width:800px"><code>{{code}}</code></pre>
+              </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</body>
+</html>
